@@ -1,8 +1,8 @@
-# JavaScript Drive-By: Exploiting the File System Access API
+# JavaScript Drive-By
 
 ## Overview
 
-Inspired by the "Java Drive-By" attacks from the early 2000s, this repository contains proof-of-concept (PoC) exploits that demonstrate how the File System Access API in Chromium-based browsers (such as Google Chrome, Edge, Brave, and Opera) can be abused to achieve arbitrary code execution on macOS systems.
+Inspired by the "Java Drive-By" attacks from the early 2000s, this repository contains proof-of-concept (PoC) exploits demonstrated in the blog post, "Java(Script) Drive-By: Hacking Without 0days." that show how the File System Access API in Chromium-based browsers can be abused to achieve arbitrary code execution on macOS systems.
 
 ## Warning ⚠️
 
